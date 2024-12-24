@@ -1,0 +1,35 @@
+services:
+  app1:
+    build: .
+    volumes:
+      - static_volume:/app/static
+      - ./nginx/proxy_params:/etc/nginx/proxy_params 
+      - media_volume:/app/media
+    expose:
+      - "8000"
+
+  app2:
+    build: .
+    volumes:
+      - static_volume:/app/static
+      - ./nginx/proxy_params:/etc/nginx/proxy_params 
+      - media_volume:/app/media
+    expose:
+      - "8000"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/proxy_params:/etc/nginx/proxy_params 
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - app1
+      - app2
+
+volumes:
+  static_volume:
+  media_volume:
